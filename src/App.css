@@ -1,3 +1,33 @@
 .App {
   text-align: center;
+  clear: both;
+}
+
+.container {
+  max-width: 90vw;
+  max-height: 100vh;
+  margin: auto;
+}
+
+.button {
+  padding: 10px 15px;
+  cursor: pointer;
+  text-align: center;
+  font-size: 0.9em;
+  border: 1px solid #e0e0e0;
+  text-decoration: none;
+}
+
+.tooltip {
+  position: absolute;
+  top: 10vh;
+  left: 5vw;
+}
+
+.tooltip .title {
+  font-size: 13px;
+}
+
+.tooltip .name {
+  font-weight: bold;
 }
