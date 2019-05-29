@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
+import { BubbleChartHelper } from "./D3_components/BubbleChartHelper";
+import { setupToolbar } from "./D3_components/ToolbarHelper";
 
 class BubbleChart extends Component {
   static defaultProps = {
@@ -22,11 +24,14 @@ class BubbleChart extends Component {
       const uniqueLabels = labels.map(label =>
         this.getUniqueLabels(data, label)
       );
-
       const labelsObj = {};
       labels.forEach((label, index) => {
         labelsObj[label] = uniqueLabels[index];
       });
+
+      const bubbleChart = BubbleChartHelper(width, height, labelsObj);
+      bubbleChart("#root", data);
+      setupToolbar(bubbleChart);
     }
   }
 

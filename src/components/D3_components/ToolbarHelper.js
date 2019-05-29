@@ -10,6 +10,6 @@ export const setupToolbar = chart => {
       button.classed("active", true);
 
       let buttonId = button.attr("id");
-      return buttonId;
+      chart.toggleSort(buttonId);
     });
 };
