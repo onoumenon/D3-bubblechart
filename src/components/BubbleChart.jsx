@@ -7,7 +7,8 @@ class BubbleChart extends Component {
   static defaultProps = {
     width: 0,
     height: 0,
-    data: []
+    data: [],
+    selectors: {}
   };
 
   getUniqueLabels(data, attr) {
@@ -19,17 +20,24 @@ class BubbleChart extends Component {
   }
 
   componentDidMount() {
-    const { data, width, height, labels } = this.props;
+    const { data, width, height, labels, selectors } = this.props;
     if (data.length > 0) {
       const uniqueLabels = labels.map(label =>
         this.getUniqueLabels(data, label)
       );
+
       const labelsObj = {};
       labels.forEach((label, index) => {
         labelsObj[label] = uniqueLabels[index];
       });
 
-      const bubbleChart = BubbleChartHelper(width, height, labelsObj);
+      const bubbleChart = BubbleChartHelper(
+        width,
+        height,
+        labelsObj,
+        selectors
+      );
+
       bubbleChart("#root", data);
       setupToolbar(bubbleChart);
     }
@@ -46,7 +54,9 @@ class BubbleChart extends Component {
 BubbleChart.propTypes = {
   width: PropTypes.number,
   height: PropTypes.number,
-  data: PropTypes.array
+  data: PropTypes.array,
+  labels: PropTypes.arrayOf(PropTypes.string),
+  selectors: PropTypes.object
 };
 
 export default BubbleChart;

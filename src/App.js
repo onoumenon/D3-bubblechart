@@ -3,7 +3,8 @@ import "./App.css";
 import BubbleChart from "./components/BubbleChart";
 import Toolbar from "./components/Toolbar";
 import * as stalls from "./data/data.json";
-import { activeLabel, labels } from "./data/labels";
+import { activeLabel, labels, selectors } from "./data/labels";
+
 class App extends Component {
   state = {
     vw: window.innerWidth,
@@ -30,7 +31,13 @@ class App extends Component {
     return (
       <div className="App container">
         <Toolbar labels={labels} activeLabel={activeLabel} />
-        <BubbleChart data={data} width={vw} height={vh} labels={labels} />
+        <BubbleChart
+          data={data}
+          width={vw}
+          height={vh}
+          labels={labels}
+          selectors={selectors}
+        />
       </div>
     );
   }

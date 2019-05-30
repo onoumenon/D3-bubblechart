@@ -1,7 +1,7 @@
 import * as d3 from "d3";
 import Tooltip from "./TooltipHelper";
 
-export function BubbleChartHelper(width, height, labels) {
+export function BubbleChartHelper(width, height, labels, selectors) {
   const smallScreen = width < 600;
   const tooltip = Tooltip();
   const center = { x: width / 2, y: height / 2 };
@@ -9,14 +9,18 @@ export function BubbleChartHelper(width, height, labels) {
   const strength = 0.05;
   let sortType = null;
 
+  function getLabelsByIndex(index) {
+    return Object.entries(labels)[index][1].map(item => item.label);
+  }
+
   const color = d3
     .scaleOrdinal()
-    .domain(["Stall A", "Stall B", "Stall C", "Stall D"])
+    .domain(getLabelsByIndex(0))
     .range(["#E08E79", "#C0ADDB", "#ECE5CE", "#C5E0DC"]);
 
   const getNodes = data => {
     const maxValue = d3.max(data, item => {
-      return item.price;
+      return item[selectors.attr[selectors.radiusIndex]];
     });
 
     const radiusScale = d3
@@ -26,17 +30,22 @@ export function BubbleChartHelper(width, height, labels) {
       .domain([0, maxValue]);
 
     const nodes = data.map(item => {
-      return {
-        radius: radiusScale(item.price),
-        price: item.price,
-        name: item.name,
-        location: item.location,
-        stall: item.stall,
-        x: Math.random(),
-        y: Math.random()
-      };
+      const nodeObj = {};
+      nodeObj.radius = radiusScale(item[selectors.attr[selectors.radiusIndex]]);
+      selectors.attr.forEach(attr => {
+        nodeObj[attr] = item[attr];
+      });
+
+      nodeObj.x = Math.random();
+      nodeObj.y = Math.random();
+      return nodeObj;
     });
-    return nodes.sort((a, b) => b.price - a.price);
+
+    return nodes.sort(
+      (a, b) =>
+        b[selectors.attr[selectors.radiusIndex]] -
+        a[selectors.attr[selectors.radiusIndex]]
+    );
   };
 
   function updateBubblePositions() {
@@ -83,7 +92,8 @@ export function BubbleChartHelper(width, height, labels) {
       .select(selector)
       .append("svg")
       .attr("width", width)
-      .attr("height", height);
+      .attr("height", height)
+      .attr("data-testid", "d3-svg");
 
     bubbles = svg.selectAll(".bubble").data(nodes);
 
@@ -95,10 +105,12 @@ export function BubbleChartHelper(width, height, labels) {
         return item.radius;
       })
       .attr("fill", function(item) {
-        return color(item.stall);
+        return color(item[selectors.attr[selectors.colorIndex]]);
       })
       .attr("stroke", function(item) {
-        return d3.rgb(color(item.stall)).darker();
+        return d3
+          .rgb(color(item[selectors.attr[selectors.colorIndex]]))
+          .darker();
       })
       .attr("stroke-width", 2)
       .on("mouseover", showTooltip)
@@ -163,20 +175,23 @@ export function BubbleChartHelper(width, height, labels) {
     return labels[type];
   };
 
-  function getLabelPositionX(item) {
+  function getLabelPosition(item, axis) {
     return getLabelByType(sortType).find(
       label => label.label === item[sortType]
-    ).x;
+    )[axis];
+  }
+
+  function getLabelPositionX(item) {
+    return getLabelPosition(item, "x");
   }
   function getLabelPositionY(item) {
-    return getLabelByType(sortType).find(
-      label => label.label === item[sortType]
-    ).y;
+    return getLabelPosition(item, "y");
   }
 
   function hideLabels() {
-    svg.selectAll(".location").remove();
-    svg.selectAll(".stall").remove();
+    selectors.sortingLabelsIndex.map(i =>
+      svg.selectAll(`.${selectors.attr[i]}`).remove()
+    );
   }
 
   function showLabels(id) {
@@ -244,15 +259,22 @@ export function BubbleChartHelper(width, height, labels) {
     const content = `
     <div class="card w-40 shadow">
       <div class="card-body">
-        <h4 class="card-title">${item.name}</h4>
-        <h5 class="card-text">Price: $${item.price}</h5>
+        <h4 class="card-title">${
+          item[selectors.attr[selectors.tooltipIndex[0]]]
+        }</h4>
+        <h5 class="card-text">Price: $${
+          item[selectors.attr[selectors.radiusIndex]]
+        }</h5>
       </div>
     </div>`;
     tooltip.showTooltip(content, d3.event);
   }
 
   function hideTooltip(item) {
-    d3.select(this).attr("stroke", d3.rgb(color(item.stall)).darker());
+    d3.select(this).attr(
+      "stroke",
+      d3.rgb(color(item[selectors.attr[selectors.colorIndex]])).darker()
+    );
 
     tooltip.hideTooltip();
   }
