@@ -1,14 +1,16 @@
 import React, { Component } from "react";
+import * as d3 from "d3";
 import PropTypes from "prop-types";
 import { BubbleChartHelper } from "./D3_components/BubbleChartHelper";
 import { setupToolbar } from "./D3_components/ToolbarHelper";
 
 class BubbleChart extends Component {
-  static defaultProps = {
-    width: 0,
-    height: 0,
-    data: [],
-    selectors: {}
+  state = {
+    width: this.props.width,
+    height: this.props.height,
+    data: this.props.data,
+    labels: this.props.labels,
+    selectors: this.props.selectors
   };
 
   getUniqueLabels(data, attr) {
@@ -20,28 +22,40 @@ class BubbleChart extends Component {
   }
 
   componentDidMount() {
-    const { data, width, height, labels, selectors } = this.props;
+    window.addEventListener("resize", this.resize);
+    const { data } = this.state;
     if (data.length > 0) {
-      const uniqueLabels = labels.map(label =>
-        this.getUniqueLabels(data, label)
-      );
-
-      const labelsObj = {};
-      labels.forEach((label, index) => {
-        labelsObj[label] = uniqueLabels[index];
-      });
-
-      const bubbleChart = BubbleChartHelper(
-        width,
-        height,
-        labelsObj,
-        selectors
-      );
-
-      bubbleChart("#root", data);
-      setupToolbar(bubbleChart);
+      this.createChart();
     }
   }
+
+  createChart = () => {
+    const { data, width, height, labels, selectors } = this.state;
+    const uniqueLabels = labels.map(label => this.getUniqueLabels(data, label));
+
+    const labelsObj = {};
+    labels.forEach((label, index) => {
+      labelsObj[label] = uniqueLabels[index];
+    });
+
+    const bubbleChart = BubbleChartHelper(width, height, labelsObj, selectors);
+
+    bubbleChart("#root", data);
+    setupToolbar(bubbleChart);
+  };
+
+  resize = () => {
+    d3.select("svg").remove();
+    let currentWidth = window.innerWidth;
+    let currentHeight = window.innerHeight;
+    if (currentWidth !== this.state.vw) {
+      this.setState({ width: currentWidth });
+    }
+    if (currentHeight !== this.state.vh) {
+      this.setState({ height: currentHeight });
+    }
+    this.createChart();
+  };
 
   render() {
     if (!this.props.data.length) {

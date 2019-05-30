@@ -7,6 +7,7 @@ export function BubbleChartHelper(width, height, labels, selectors) {
   const center = { x: width / 2, y: height / 2 };
   const maxRange = width / 30 + 20;
   const strength = 0.05;
+  const avoidToolBarBuffer = 50;
   let sortType = null;
 
   function getLabelsByIndex(index) {
@@ -154,7 +155,7 @@ export function BubbleChartHelper(width, height, labels, selectors) {
         (item, i) =>
           (item["y"] = (
             ((height - 100) / (arrLength + 1)) * (i + 1) +
-            70
+            avoidToolBarBuffer
           ).toFixed(0))
       );
       return labels;
@@ -201,7 +202,7 @@ export function BubbleChartHelper(width, height, labels, selectors) {
     let xAttr = function(item) {
       return getLabel(item).x;
     };
-    let yAttr = center.y - maxRange * 3.5;
+    let yAttr = center.y - maxRange * 3.5 + avoidToolBarBuffer;
 
     if (smallScreen) {
       xAttr = width / 6;

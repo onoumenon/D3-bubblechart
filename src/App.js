@@ -12,20 +12,6 @@ class App extends Component {
     data: stalls.default
   };
 
-  componentDidMount = () => {
-    window.addEventListener("resize", this.resize);
-  };
-
-  resize = () => {
-    let currentWidth = window.innerWidth;
-    let currentHeight = window.innerHeight;
-    if (currentWidth !== this.state.vw) {
-      this.setState({ vw: currentWidth });
-    }
-    if (currentHeight !== this.state.vh) {
-      this.setState({ vh: currentHeight });
-    }
-  };
   render() {
     const { vw, vh, data } = this.state;
     return (
