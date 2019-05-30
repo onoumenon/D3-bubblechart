@@ -3,7 +3,7 @@ import Tooltip from "./TooltipHelper";
 
 export function BubbleChartHelper(width, height, labels, selectors) {
   //Configuration for chart:
-  const smallScreen = width < 600;
+  const smallScreen = width < 550;
   const tooltip = Tooltip();
   const center = { x: width / 2, y: height / 2 };
   const maxRange = width / 30 + 20;

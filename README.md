@@ -27,7 +27,7 @@ npm run test:watch
 ### Responsiveness
 
 - On screen resize (eg: switching from vertical to horizontal view on mobile), svg of chart rerenders so that it fits the full screen width and height
-- If screen size is small (eg: < 600px), labels and sorted bubble will be split vertically instead
+- If screen size is small (eg: < 550px), labels and sorted bubble will be split vertically instead
 - Size of bubbles is calculated based on screen width
 - On touchscreens, touching away hides tooltip
 
