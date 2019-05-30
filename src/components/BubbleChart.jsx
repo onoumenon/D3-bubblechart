@@ -46,6 +46,7 @@ class BubbleChart extends Component {
 
   resize = () => {
     d3.select("svg").remove();
+    d3.select(".tooltip").remove();
     let currentWidth = window.innerWidth;
     let currentHeight = window.innerHeight;
     if (currentWidth !== this.state.vw) {
