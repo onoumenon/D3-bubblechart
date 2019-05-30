@@ -2,6 +2,7 @@ import * as d3 from "d3";
 import Tooltip from "./TooltipHelper";
 
 export function BubbleChartHelper(width, height, labels, selectors) {
+  //Configuration for chart:
   const smallScreen = width < 600;
   const tooltip = Tooltip();
   const center = { x: width / 2, y: height / 2 };
@@ -19,6 +20,7 @@ export function BubbleChartHelper(width, height, labels, selectors) {
     .domain(getLabelsByIndex(0))
     .range(["#E08E79", "#C0ADDB", "#ECE5CE", "#C5E0DC"]);
 
+  // Attributes for each node:
   const getNodes = data => {
     const maxValue = d3.max(data, item => {
       return item[selectors.attr[selectors.radiusIndex]];
@@ -86,6 +88,7 @@ export function BubbleChartHelper(width, height, labels, selectors) {
   let bubbles;
   let svg;
 
+  // Function for initializing chart:
   const chart = function chart(selector, data) {
     const nodes = getNodes(data);
 
@@ -124,6 +127,7 @@ export function BubbleChartHelper(width, height, labels, selectors) {
     sortBubbles();
   };
 
+  //Sorting-related functions below:
   function sortingForce(centerProp) {
     if (smallScreen) {
       simulateBubbles.force(
@@ -254,6 +258,7 @@ export function BubbleChartHelper(width, height, labels, selectors) {
     }
   };
 
+  // Tooltip-related funcions below:
   function showTooltip(item) {
     d3.select(this).attr("stroke", "#000");
 
